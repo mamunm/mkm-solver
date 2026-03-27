@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+
+# Project folders
+experiments/
+debug/
+misc/
+
+# Output
+mkm_results/
+
+# Lock files
+uv.lock
+
+# Claude
+.claude/
+
+# OS
+.DS_Store

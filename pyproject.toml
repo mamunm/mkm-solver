@@ -1,0 +1,33 @@
+[project]
+name = "mkm-solver"
+version = "0.1.0"
+description = "Microkinetic model solver for C-N coupling on metal surfaces"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "rich>=13.0",
+    "matplotlib>=3.7",
+    "cython>=3.2.4",
+]
+
+[project.optional-dependencies]
+sundials = [
+    "scikits-odes-core>=3.0",
+    "scikits-odes-sundials>=3.0",
+]
+
+# Assimulo: install separately via conda (conda install -c conda-forge assimulo)
+# PyPI build is broken; the code handles its absence gracefully with try/except
+#
+# SUNDIALS C library required for scikits-odes-sundials:
+#   conda install -c conda-forge sundials
+# Then install the Python bindings:
+#   uv pip install -e ".[sundials]"
+
+[project.scripts]
+mkm-solver = "mkm_solver.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

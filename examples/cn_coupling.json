@@ -1,0 +1,125 @@
+{
+  "model_name": "CN_coupling_CuAu",
+  "temperature": 523.15,
+  "site_types": {
+    "A": 1.57e19,
+    "B": 1.57e19
+  },
+  "gas_species": {
+    "NH3_g": {"pressure": {"value": 0.1, "unit": "bar"}, "mass": 17.031},
+    "CH4_g": {"pressure": {"value": 0.5, "unit": "bar"}, "mass": 16.043},
+    "HCN_g": {"pressure": {"value": 0.001, "unit": "bar"}, "mass": 27.026},
+    "H2_g":  {"pressure": {"value": 10.0, "unit": "bar"}, "mass": 2.016}
+  },
+  "species_n_sites": {},
+  "reactions": [
+    {
+      "type": "adsorption",
+      "reactants": {"NH3_g": 1},
+      "products":  {"NH3*_A": 1},
+      "Ea": 0.0,
+      "DeltaE": -0.85
+    },
+    {
+      "type": "surface",
+      "reactants": {"NH3*_A": 1},
+      "products":  {"NH2*_A": 1, "H*_A": 1},
+      "Ea": 1.10,
+      "DeltaE": 0.35
+    },
+    {
+      "type": "surface",
+      "reactants": {"NH2*_A": 1},
+      "products":  {"NH*_A": 1, "H*_A": 1},
+      "Ea": 1.20,
+      "DeltaE": 0.30
+    },
+    {
+      "type": "surface",
+      "reactants": {"NH*_A": 1},
+      "products":  {"N*_A": 1, "H*_A": 1},
+      "Ea": 1.30,
+      "DeltaE": 0.40
+    },
+    {
+      "type": "adsorption",
+      "reactants": {"CH4_g": 1},
+      "products":  {"CH3*_B": 1, "H*_B": 1},
+      "Ea": 0.0,
+      "DeltaE": 0.20
+    },
+    {
+      "type": "surface",
+      "reactants": {"CH3*_B": 1},
+      "products":  {"CH2*_B": 1, "H*_B": 1},
+      "Ea": 1.00,
+      "DeltaE": 0.30
+    },
+    {
+      "type": "surface",
+      "reactants": {"CH2*_B": 1},
+      "products":  {"CH*_B": 1, "H*_B": 1},
+      "Ea": 1.10,
+      "DeltaE": 0.35
+    },
+    {
+      "type": "surface",
+      "reactants": {"CH*_B": 1},
+      "products":  {"C*_B": 1, "H*_B": 1},
+      "Ea": 1.20,
+      "DeltaE": 0.40
+    },
+    {
+      "type": "surface",
+      "reactants": {"N*_A": 1, "C*_B": 1},
+      "products":  {"CN*_B": 1},
+      "Ea": 0.95,
+      "DeltaE": -0.45
+    },
+    {
+      "type": "surface",
+      "reactants": {"CN*_B": 1, "H*_B": 1},
+      "products":  {"HCN*_B": 1},
+      "Ea": 0.70,
+      "DeltaE": -0.40
+    },
+    {
+      "type": "adsorption",
+      "reactants": {"HCN_g": 1},
+      "products":  {"HCN*_B": 1},
+      "Ea": 0.0,
+      "DeltaE": -0.50
+    },
+    {
+      "type": "adsorption",
+      "reactants": {"H2_g": 1},
+      "products":  {"H*_A": 2},
+      "Ea": 0.0,
+      "DeltaE": -0.90
+    },
+    {
+      "type": "adsorption",
+      "reactants": {"H2_g": 1},
+      "products":  {"H*_B": 2},
+      "Ea": 0.0,
+      "DeltaE": -0.85
+    }
+  ],
+  "solver": {
+    "method": "scipy-bdf",
+    "rtol": 1e-8,
+    "atol": 1e-10,
+    "t_span": [0, 1e8],
+    "max_step": 1e4,
+    "steady_state_method": "integration",
+    "steady_state_tol": 1e-6,
+    "fsolve_fallback": true
+  },
+  "sensitivity": {
+    "enabled": false,
+    "delta": 0.01,
+    "target_rate_reaction_id": "R9",
+    "compute_drc": true,
+    "compute_dtrc": true
+  }
+}
