@@ -11,6 +11,36 @@ from mkm_solver.output import write_all
 from mkm_solver.plotting import plot_coverage_vs_time, plot_energy_diagram, plot_sensitivity
 
 
+def _extract_time_series(sol):
+    """Extract (t, y) arrays from solver result, handling different backends.
+
+    Returns (t, y) where y has shape (n_vars, n_points) to match scipy convention.
+
+    scipy solve_ivp: sol.t, sol.y (already n_vars x n_points)
+    sundials (scikits.odes): sol.values.t, sol.values.y (n_points x n_vars)
+    assimulo: sol is (t, y) or (t, y, yd) tuple (n_points x n_vars)
+    """
+    import numpy as np
+    if sol is None:
+        return None, None
+    # scipy solve_ivp result
+    if hasattr(sol, "t") and hasattr(sol, "y") and not hasattr(sol, "values"):
+        return sol.t, sol.y
+    # sundials scikits.odes SolverReturn: sol.values.t, sol.values.y
+    if hasattr(sol, "values") and hasattr(sol.values, "t") and hasattr(sol.values, "y"):
+        t = np.asarray(sol.values.t)
+        y = np.asarray(sol.values.y).T  # (n_points, n_vars) -> (n_vars, n_points)
+        return t, y
+    # assimulo tuple: (t, y) or (t, y, yd)
+    if isinstance(sol, tuple) and len(sol) >= 2:
+        t = np.asarray(sol[0])
+        y = np.asarray(sol[1])
+        if y.ndim == 2 and y.shape[0] == len(t):
+            y = y.T
+        return t, y
+    return None, None
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="mkm_solver",
@@ -91,9 +121,10 @@ def main():
         out_dir.mkdir(parents=True, exist_ok=True)
 
         sol = ss_result.get("sol")
-        if hasattr(sol, "t") and hasattr(sol, "y"):
+        t_arr, y_arr = _extract_time_series(sol)
+        if t_arr is not None:
             cov_path = str(out_dir / "coverage_vs_time.png")
-            plot_coverage_vs_time(sol, model, cov_path)
+            plot_coverage_vs_time(t_arr, y_arr, model, cov_path)
             log.info(f"Plot: {cov_path}")
 
         energy_path = str(out_dir / "energy_diagram.png")

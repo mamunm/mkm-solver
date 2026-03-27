@@ -10,14 +10,20 @@ from mkm_solver.schema import MKMModel
 
 
 def plot_coverage_vs_time(
-    sol, model: MKMModel, output_path: str
+    t: np.ndarray, y: np.ndarray, model: MKMModel, output_path: str
 ) -> None:
-    """Plot transient coverage evolution from the solve_ivp solution object."""
+    """Plot transient coverage evolution.
+
+    Args:
+        t: Time array of shape (n_points,).
+        y: Coverage array of shape (n_vars, n_points). Only the first
+           n_species rows are plotted (free sites excluded).
+    """
     fig, ax = plt.subplots(figsize=(10, 6))
 
     species_names = list(model.surface_species.keys())
     for i, name in enumerate(species_names):
-        ax.plot(sol.t, sol.y[i, :], label=name, linewidth=1.5)
+        ax.plot(t, y[i, :], label=name, linewidth=1.5)
 
     ax.set_xscale("log")
     ax.set_xlabel("Time (s)")
