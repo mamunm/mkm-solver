@@ -9,10 +9,6 @@ dependencies = [
     "rich>=13.0",
     "matplotlib>=3.7",
     "cython>=3.2.4",
-]
-
-[project.optional-dependencies]
-sundials = [
     "scikits-odes-core>=3.0",
     "scikits-odes-sundials>=3.0",
 ]

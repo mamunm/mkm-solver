@@ -8,27 +8,40 @@ Developed for studying C-N coupling reaction mechanisms on mono- and bimetallic 
 
 ## Installation
 
+Two conda environments are provided because `scikits.odes` (SUNDIALS bindings) and `assimulo` require incompatible SUNDIALS versions. Each environment includes the base scipy solvers plus one stiff-solver backend.
+
+### Environment 1: SUNDIALS / scikits.odes (recommended)
+
+Provides `scipy-*` and `sundials-cvode-bdf` solvers.
+
 ```bash
-# Base install (scipy solvers)
-pip install -e .
+conda env create -f environment.yml
+conda activate mkm-solver-env
+```
 
-# With SUNDIALS support
-conda install -c conda-forge sundials
-pip install -e ".[sundials]"
+### Environment 2: Assimulo
 
-# With Assimulo support (conda only)
-conda install -c conda-forge assimulo
-pip install -e .
+Provides `scipy-*`, `assimulo-cvode-bdf`, `assimulo-radau5`, and `assimulo-ida-dae` solvers.
+
+```bash
+conda env create -f environment_assimulo.yml
+conda activate mkm-solver-assimulo-env
 ```
 
 ## Usage
 
 ```bash
-# Run with default settings (scipy-bdf)
+# Run with default settings (scipy-bdf) — works in either environment
 mkm-solver experiments/Cu/cu.json -o experiments/Cu/results
 
-# Override solver method
+# Use SUNDIALS CVODE (requires mkm-solver-env)
+conda activate mkm-solver-env
+mkm-solver experiments/Cu/cu.json -o results --method sundials-cvode-bdf
+
+# Use Assimulo solvers (requires mkm-solver-assimulo-env)
+conda activate mkm-solver-assimulo-env
 mkm-solver experiments/Cu/cu.json -o results --method assimulo-radau5
+mkm-solver experiments/Cu/cu.json -o results --method assimulo-ida-dae
 
 # With lateral interactions and plots
 mkm-solver experiments/Cu/cu.json -o results --lateral lateral.json --plot
@@ -93,15 +106,15 @@ Lateral interactions (separate JSON):
 
 ## Solver Methods
 
-| Method | Backend | Type | Install |
+| Method | Backend | Type | Environment |
 |---|---|---|---|
-| `scipy-bdf` | scipy | ODE (BDF) | included |
-| `scipy-lsoda` | scipy | ODE (auto stiff/nonstiff) | included |
-| `scipy-radau` | scipy | ODE (implicit RK) | included |
-| `sundials-cvode-bdf` | scikits.odes | ODE (SUNDIALS CVODE) | `pip install -e ".[sundials]"` |
-| `assimulo-cvode-bdf` | Assimulo | ODE (SUNDIALS CVODE) | `conda install assimulo` |
-| `assimulo-radau5` | Assimulo | ODE (Hairer Radau5) | `conda install assimulo` |
-| `assimulo-ida-dae` | Assimulo | DAE (SUNDIALS IDA) | `conda install assimulo` |
+| `scipy-bdf` | scipy | ODE (BDF) | both |
+| `scipy-lsoda` | scipy | ODE (auto stiff/nonstiff) | both |
+| `scipy-radau` | scipy | ODE (implicit RK) | both |
+| `sundials-cvode-bdf` | scikits.odes | ODE (SUNDIALS CVODE) | `mkm-solver-env` |
+| `assimulo-cvode-bdf` | Assimulo | ODE (SUNDIALS CVODE) | `mkm-solver-assimulo-env` |
+| `assimulo-radau5` | Assimulo | ODE (Hairer Radau5) | `mkm-solver-assimulo-env` |
+| `assimulo-ida-dae` | Assimulo | DAE (SUNDIALS IDA) | `mkm-solver-assimulo-env` |
 
 The ODE formulation includes free-site coverages as state variables with dtheta_*/dt = -sum(n_i * dtheta_i/dt), matching MATLAB ode15s. The DAE formulation (IDA) enforces the site balance as a true algebraic constraint.
 
