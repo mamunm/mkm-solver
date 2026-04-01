@@ -13,14 +13,6 @@ dependencies = [
     "scikits-odes-sundials>=3.0",
 ]
 
-# Assimulo: install separately via conda (conda install -c conda-forge assimulo)
-# PyPI build is broken; the code handles its absence gracefully with try/except
-#
-# SUNDIALS C library required for scikits-odes-sundials:
-#   conda install -c conda-forge sundials
-# Then install the Python bindings:
-#   uv pip install -e ".[sundials]"
-
 [project.scripts]
 mkm-solver = "mkm_solver.__main__:main"
 
