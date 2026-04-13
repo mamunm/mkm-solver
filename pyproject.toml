@@ -15,6 +15,7 @@ dependencies = [
 
 [project.scripts]
 mkm-solver = "mkm_solver.__main__:main"
+mkm-fit-lateral = "mkm_solver.fit_lateral:main"
 
 [build-system]
 requires = ["hatchling"]
